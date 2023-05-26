@@ -23,7 +23,7 @@ class SnakeBot:
         self.epsilon = self.min_exploration_rate
         self.training = training
         self.file = file
-        self.buffer = Queue(1000)
+        self.buffer = Queue(100)
 
         self.build_model()
 
@@ -34,11 +34,10 @@ class SnakeBot:
     def build_model(self):
         input1 = tf.keras.layers.Input((64, 64, 1))
 
-        x = tf.keras.layers.Conv2D(5, (3, 3), activation='relu')(input1)
+        x = tf.keras.layers.Conv2D(32, (3, 3), activation='relu')(input1)
         x = tf.keras.layers.MaxPooling2D()(x)
-        x = tf.keras.layers.Conv2D(5, (3, 3), activation='relu')(x)
-        x = tf.keras.layers.MaxPooling2D()(x)
-        x1 = tf.keras.layers.Flatten()(x)
+
+        x = tf.keras.layers.Flatten()(x)
 
         x = tf.keras.layers.Dense(32, activation='relu')(x)
         x = tf.keras.layers.Dense(64, activation='relu')(x)
@@ -47,7 +46,7 @@ class SnakeBot:
 
         self.model = tf.keras.Model(inputs=[input1], outputs=[x])
 
-        self.model.compile('adam', 'categorical_crossentropy')
+        self.model.compile('adam', 'mse')
         self.model.summary()
 
 
@@ -66,8 +65,8 @@ class SnakeBot:
         return action
     
     def update_table(self, state, action, reward, next_state, done):
-        pred_state = self.model.predict(state, verbose=0)[0]
-        pred_next_state = self.model.predict(next_state, verbose=0)[0]
+        pred_state = self.model.predict(np.expand_dims(state, axis=0), verbose=0)[0]
+        pred_next_state = self.model.predict(np.expand_dims(next_state, axis=0), verbose=0)[0]
 
         if done:
             true_val = (1 - self.alpha)*pred_state[action.value] + self.alpha*(reward)
@@ -77,7 +76,7 @@ class SnakeBot:
     
         true_y = np.copy(pred_state)
         true_y[action.value] = true_val
-        self.model.fit(state, np.expand_dims(true_y, axis=0), verbose=0)
+        self.model.fit(np.expand_dims(state, axis=0), np.expand_dims(true_y, axis=0), verbose=0)
 
         self.buffer.add((state, action, reward, next_state, done))
 
@@ -113,7 +112,7 @@ class SnakeBot:
         dones = []
 
         for state, action, reward, next_state, done in batch:
-            states.append(np.expand_dims(state, axis=0))
+            states.append(state)
             next_states.append(next_state)
             actions.append(action)
             rewards.append(reward)

@@ -196,7 +196,6 @@ class SnakeGame:
         img = cv2.resize(img, (64, 64))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = np.reshape(img, (64, 64, 1))
-        img = np.expand_dims(img, axis=0)
         self.frame = img
 
     def game_step(self, action=None):
@@ -221,7 +220,7 @@ class SnakeGame:
         pygame.display.flip()
         
         if self.is_colliding():
-            self.frames.add(np.zeros((1, 64, 64, 1)))
+            # self.frames.add(np.zeros((1, 64, 64, 1)))
             self.is_lasting = False
         
         return self.is_lasting

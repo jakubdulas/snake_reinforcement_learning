@@ -5,7 +5,7 @@ import os
 
 if __name__ == '__main__':
     playing = True
-    bot = SnakeBot('weightsCNN2.h5', True)
+    bot = SnakeBot('weightsCNN.h5', True)
     episodes = 100_000
     game = SnakeGame(AI_mode=True)
     score_sum = 0
