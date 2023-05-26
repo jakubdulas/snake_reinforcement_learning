@@ -73,12 +73,27 @@ class SnakeBot:
 
     def train_on_batch(self, batch_size):
         batch = random.choices(self.buffer.array, k=batch_size)
+
+        states = []
+        next_states = []
+        actions = []
+        rewards = []
+        dones = []
+
+        for state, action, reward, next_state, done in batch:
+            states.append(state)
+            next_states.append(next_state)
+            actions.append(action)
+            rewards.append(reward)
+            dones.append(done)
+
+        pred_states = self.model.predict(np.array(states))
+        pred_next_states = self.model.predict(np.array(next_states))
+
         X = []
         y = []
-        for state, action, reward, next_state, done in batch:
-            pred_state = self.model.predict(np.expand_dims(state, axis=0), verbose=0)[0]
-            pred_next_state = self.model.predict(np.expand_dims(next_state, axis=0), verbose=0)[0]
 
+        for pred_state, action, reward, pred_next_state, done in zip(pred_states, actions, rewards, pred_next_states, dones):
             if done:
                 true_val = (1 - self.alpha)*pred_state[action.value] + self.alpha*(reward)
             else:
@@ -89,6 +104,7 @@ class SnakeBot:
             true_y[action.value] = true_val
             X.append(state)
             y.append(true_y)
+
         X = np.array(X)
         y = np.array(y)
         self.model.fit(X, y)

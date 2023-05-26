@@ -21,27 +21,24 @@ class SnakeGame:
         self.add_segments = add_segments
         self.AI_mode = AI_mode
         pygame.time.set_timer(self.PORUSZ_WEZEM, 200)
-        self.frames = Queue(2)
+        # self.frames = Queue(2)
+        self.frame = np.zeros((64, 64, 1))
 
-        self.reset_frames()
+        # self.reset_frames()
 
-        for _ in range(2):
-            img = np.zeros((1, 64, 64, 1))
-            self.frames.add(img)
-        
         self.reset()
 
-    def reset_frames(self):
-        for _ in range(2):
-            img = np.zeros((1, 64, 64, 1))
-            self.frames.add(img)
+    # def reset_frames(self):
+    #     for _ in range(2):
+    #         img = np.zeros((1, 64, 64, 1))
+    #         self.frames.add(img)
 
     def reset(self):
         self.snake = Snake()
         self.apple = Apple(self.snake)
         self.score = 0
         self.is_lasting = True
-        self.reset_frames()
+        # self.reset_frames()
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -88,7 +85,7 @@ class SnakeGame:
 
     def get_state(self, type='vector'):
         if type == 'image':
-            return self.frames.array
+            return self.frame
         
         if type == 'map':
             map = np.zeros(GRID_SIZE)
@@ -200,7 +197,7 @@ class SnakeGame:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = np.reshape(img, (64, 64, 1))
         img = np.expand_dims(img, axis=0)
-        self.frames.add(img)
+        self.frame = img
 
     def game_step(self, action=None):
         if action is not None:

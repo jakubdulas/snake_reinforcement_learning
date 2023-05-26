@@ -4,7 +4,7 @@ from SnakeGame import SnakeGame
 
 if __name__ == '__main__':
     playing = True
-    bot = SnakeBot('weightsDNN_without_segments.h5', True)
+    bot = SnakeBot('weightsDNN_without_segments2.h5', True)
     episodes = 10_000
     game = SnakeGame(add_segments=False, AI_mode=True)
     score_sum = 0

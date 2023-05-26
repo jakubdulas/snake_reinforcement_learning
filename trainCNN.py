@@ -5,7 +5,7 @@ import os
 
 if __name__ == '__main__':
     playing = True
-    bot = SnakeBot('weightsCNN.h5', True)
+    bot = SnakeBot('weightsCNN2.h5', True)
     episodes = 100_000
     game = SnakeGame(AI_mode=True)
     score_sum = 0
@@ -44,17 +44,5 @@ if __name__ == '__main__':
             bot.update_table(state, action, reward, new_state, not playing)
             bot.update_epsilon(episode)
 
-            # print(f"Episode: {episode}")
-            # print(f"Mean score: {score_sum/episode}")
-            # print(f"Epsilon: {bot.epsilon}")
-
-
-            # game.add_text(, (30, 10))
-            # game.add_text(, (30, 35))
-            # game.add_text(, (30, 60))
-            # game.add_text(, (30, 85))
-            # game.add_text(, (30, 135))
-
-            # pygame.time.wait(1)
 
     game.quit()
